@@ -1,5 +1,5 @@
 # Online store Microservices API
-Этот проект — демонстрация микросервисной архитектуры для простого e-commerce-приложения, реализованной на Python (FastAPI), PostgreSQL, RabbitMQ и Docker.
+Этот проект — демонстрация микросервисной архитектуры для простого онлайн-магазина, реализованной на Python (FastAPI), PostgreSQL, RabbitMQ и Docker.
 
 ## Сервисы
 - **Product Service** — управление товарами.
