@@ -21,12 +21,19 @@
 - Uvicorn
 
 ## Структура проекта
+
 -├── cart_service/
+
 -├── order_service/
+
 -├── payment_service/
+
 -├── product_service/
+
 -├── user_service/
+
 -├── docker-compose.yml
+
 -├── README.md
 
 Каждый микросервис содержит:
