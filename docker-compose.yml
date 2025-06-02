@@ -1,0 +1,105 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app_net
+
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: Qweras.1
+      POSTGRES_DB: product_db
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_net
+
+  user_service:
+    build: ./user_service
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:Qweras.1@db:5432/user_db
+    command: ["./wait-for-it.sh", "db", "5432", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8002:8000"
+    networks:
+      - app_net
+
+  product_service:
+    build: ./product_service
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:Qweras.1@db:5432/product_db
+    command: ["./wait-for-it.sh", "db", "5432", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8001:8000"
+    networks:
+      - app_net
+
+  payment_service:
+    build: ./payment_service
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:Qweras.1@db:5432/payment_db
+    command: ["./wait-for-it.sh", "db", "5432", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8003:8000"
+    networks:
+      - app_net
+
+  cart_service:
+    build: ./cart_service
+    depends_on:
+      - rabbitmq
+      - product_service
+      - db
+    environment:
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      DATABASE_URL: postgresql://postgres:Qweras.1@db:5432/cart_db
+    command: ["./wait-for-it.sh", "db", "5432", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8004:8000"
+    networks:
+      - app_net
+
+  order_service:
+    build: ./order_service
+    depends_on:
+      - rabbitmq
+      - user_service
+      - cart_service
+      - product_service
+      - payment_service
+      - db
+    environment:
+      USER_SERVICE: http://user_service:8000
+      PRODUCT_SERVICE: http://product_service:8000
+      CART_SERVICE: http://cart_service:8000
+      PAYMENT_SERVICE: http://payment_service:8000
+      DATABASE_URL: postgresql://postgres:Qweras.1@db:5432/order_db
+    command: ["./wait-for-it.sh", "db", "5432", "--", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8005:8000"
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    driver: bridge

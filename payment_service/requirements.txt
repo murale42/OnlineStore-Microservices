@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+httpx
+python-jose[cryptography]
+requests
+pika
+pydantic
