@@ -46,8 +46,7 @@
 - `git clone https://github.com/murale42/OnlineStore-Microservices.git`
 - `cd OnlineStore-Microservices`
 
-2. Соберите и запустите контейнеры:
--`docker compose up --build`
+2. Соберите и запустите контейнеры: `docker compose up --build`
 
 3. Доступ к сервисам:
    
