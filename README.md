@@ -44,10 +44,11 @@
 ## Запуск проекта
 1. Клонируйте репозиторий:
 `git clone https://github.com/murale42/OnlineStore-Microservices.git`
+
 `cd OnlineStore-Microservices`
-2. Соберите и запустите контейнеры:
+3. Соберите и запустите контейнеры:
 `docker compose up --build`
-3. Доступ к сервисам:
+4. Доступ к сервисам:
 - Product Service	http://localhost:8001/docs
 - User Service	http://localhost:8002/docs
 - Payment Service	http://localhost:8003/docs
