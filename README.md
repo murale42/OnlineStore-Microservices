@@ -43,6 +43,7 @@
 
 ## Запуск проекта
 1. Клонируйте репозиторий:
+2. 
 `git clone https://github.com/murale42/OnlineStore-Microservices.git`
 
 `cd OnlineStore-Microservices`
